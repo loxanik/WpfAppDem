@@ -64,7 +64,7 @@ namespace WpfApp1
 
                     price.Text = Math.Round(oldPrice, 2).ToString("N2");
                     price.Foreground = Brushes.Red;
-                    price.TextDecorations = System.Windows.TextDecorations.Strikethrough;
+                    price.TextDecorations = TextDecorations.Strikethrough;
 
                     newPrice.Text = good.Price.ToString("N2");
                 }
