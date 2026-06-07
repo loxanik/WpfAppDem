@@ -7,7 +7,9 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="WindowEdit" Height="450" Width="800">
+        Icon="/Icon.ico"
+        Title="Редактирование товара" Height="450" Width="800">
+    
     <Grid Margin="10">
         <StackPanel>
             <TextBlock Text="Единица измерения"/>
@@ -32,6 +34,8 @@
                       SelectedValue="{Binding CurrentGood.CategoryId}"/>
             <TextBlock Text="Количество"/>
             <TextBox Text="{Binding CurrentGood.Amount}"/>
+            <TextBlock Text="Цена"/>
+            <TextBox Text="{Binding CurrentGood.Price}"/>
             <TextBlock Text="Скидка"/>
             <TextBox Text="{Binding CurrentGood.Discount}"/>
             <TextBlock Text="Описание"/>

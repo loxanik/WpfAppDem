@@ -19,6 +19,7 @@ namespace WpfApp1
         public Good? SelectedGood { get; set; }
         public User? CurrentUser { get; set; }
         public List<Good> Goods { get; set; }
+        public List<Good> GoodsFiltered { get; set; }
         public MainWindow(User? user)
         {
             InitializeComponent();
@@ -29,6 +30,15 @@ namespace WpfApp1
             {
                 EditButton.Visibility = Visibility.Visible;
                 ButtonDelete.Visibility = Visibility.Visible;
+                ButtonAdd.Visibility = Visibility.Visible;
+            }
+
+            if (CurrentUser?.RoleId < 3)
+            {
+                SearchTextBox.Visibility = Visibility.Visible;
+                SearchButton.Visibility = Visibility.Visible;
+                ResetSearchButton.Visibility = Visibility.Visible;
+                SortComboBox.Visibility = Visibility.Visible;
             }
 
             _context = new();
@@ -39,6 +49,8 @@ namespace WpfApp1
                 .Include(g => g.Manufactorer)
                 .Include(g => g.Category)
                 .ToList();
+            
+            GoodsFiltered = Goods;
 
             DataContext = this;
         }
@@ -62,11 +74,11 @@ namespace WpfApp1
 
                     oldPrice = currentPrice / (1 - (Convert.ToDouble(good.Discount) / 100));
 
-                    price.Text = Math.Round(oldPrice, 2).ToString("N2");
+                    price.Text = $"{Math.Round(oldPrice, 2).ToString("N2")} руб.";
                     price.Foreground = Brushes.Red;
                     price.TextDecorations = TextDecorations.Strikethrough;
 
-                    newPrice.Text = good.Price.ToString("N2");
+                    newPrice.Text = $"{good.Price.ToString("N2")} руб.";
                 }
 
                 var converter = new BrushConverter();
@@ -82,22 +94,25 @@ namespace WpfApp1
 
             Image imgEl = border.FindName("GoodImage") as Image;
 
-            string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, good.PhotoPath);
-
-
-            if (imgEl != null)
+            if (good.PhotoPath != null)
             {
-                if (File.Exists(fullPath))
-                {
-                    imgEl.Source = new BitmapImage(new Uri(fullPath, UriKind.RelativeOrAbsolute));
-                }
-                else
-                {
-                    string defaultImg = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "picture.png");
-                    imgEl.Source = new BitmapImage(new Uri(defaultImg, UriKind.RelativeOrAbsolute));
+                string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, good.PhotoPath);
 
+                if (imgEl != null)
+                {
+                    if (File.Exists(fullPath))
+                    {
+                        imgEl.Source = new BitmapImage(new Uri(fullPath, UriKind.RelativeOrAbsolute));
+                    }
+                    else
+                    {
+                        string defaultImg = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "picture.png");
+                        imgEl.Source = new BitmapImage(new Uri(defaultImg, UriKind.RelativeOrAbsolute));
+
+                    }
                 }
             }
+            
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -129,6 +144,50 @@ namespace WpfApp1
                 _context.Goods.Remove(SelectedGood);
                 _context.SaveChanges();
             }
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            string searchText = SearchTextBox.Text.ToLower();
+
+            GoodsFiltered = Goods.Where(g => g.Description.ToLower().Contains(searchText)).ToList();
+
+            GoodsListView.ItemsSource = GoodsFiltered;
+
+            DataContext = this;
+        }
+
+        private void ResetSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            GoodsListView.ItemsSource = Goods;
+            GoodsFiltered = Goods;
+        }
+
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox combo = sender as ComboBox;
+
+            if (GoodsListView == null) return;
+        
+
+            if (combo.SelectedIndex == 1)
+            {
+                GoodsListView.ItemsSource = GoodsFiltered.OrderBy(g => g.Price);
+            }
+            else if (combo.SelectedIndex == 2)
+            {
+                GoodsListView.ItemsSource = GoodsFiltered.OrderByDescending(g => g.Price);
+            } 
+            else if (combo.SelectedIndex == 0)
+            {
+                GoodsListView.ItemsSource = Goods;
+            }
+        }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var editWindow = new WindowEdit(null, _context);
+            editWindow.ShowDialog();
         }
     }
 }

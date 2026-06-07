@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
+        Icon="/Icon.ico"
         WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Каталог товаров" Height="600" Width="1200">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -31,19 +32,48 @@
                         Click="EditButton_Click">
                     
                 </Button>
+                
+                <Button Content="Добавить"
+                        Margin="10 0"
+                        Visibility="Collapsed"
+                        Name="ButtonAdd"
+                        Click="ButtonAdd_Click"/>
 
                 <Button Margin="10 0"
                         Content="Удалить"
                         Visibility="Collapsed"
                         Name="ButtonDelete"
                         Click="ButtonDelete_Click"/>
+
+                <TextBox Name="SearchTextBox" Margin="10 0" Width="200" Visibility="Collapsed"/>
+                <Button Content="Поиск"
+                        Margin="10 0"
+                        Name="SearchButton"
+                        Click="SearchButton_Click"
+                        Visibility="Collapsed"/>
+                <Button Content="Сбросить"
+                        Margin="10 0"
+                        Name="ResetSearchButton"
+                        Click="ResetSearchButton_Click"
+                        Visibility="Collapsed"/>
+
+                <ComboBox x:Name="SortComboBox" 
+                          Margin="10 0" 
+                          Visibility="Collapsed" 
+                          SelectionChanged="SortComboBox_SelectionChanged"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="Без сортировки"/>
+                    <ComboBoxItem Content="Сортировка по возрастанию цены"/>
+                    <ComboBoxItem Content="Сортировка по убыванию цены"/>
+                </ComboBox>
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1">
             <ListView ItemsSource="{Binding Goods}"
                       HorizontalContentAlignment="Stretch"
-                      SelectedItem="{Binding SelectedGood}">
+                      SelectedItem="{Binding SelectedGood}"
+                      x:Name="GoodsListView">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="Black"
@@ -62,7 +92,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Image Name="GoodImage"
-                                       Margin="10">
+                                       Margin="10" Source="/picture.png">
                                     
                                 </Image>
 
@@ -86,7 +116,7 @@
                                     </TextBlock>
                                     <TextBlock>
                                         <Run Text="Цена: "/>
-                                        <Run Text="{Binding Price}" Name="Price"/>
+                                        <Run Name="Price"/>
                                         <Run Name="NewPrice"/>
                                     </TextBlock>
                                     <TextBlock>

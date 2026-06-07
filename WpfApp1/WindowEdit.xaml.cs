@@ -15,7 +15,7 @@ namespace WpfApp1
         public List<Supplier> Suppliers { get; set; }
         public List<Manufactorer> Manufactorers { get; set; }
         public List<Category> Categories { get; set; }
-        public WindowEdit(Good selectedGood, ShoesShopContext context)
+        public WindowEdit(Good? selectedGood, ShoesShopContext context)
         {
             InitializeComponent();
             _context = context;
@@ -25,13 +25,18 @@ namespace WpfApp1
             Manufactorers = _context.Manufactorers.ToList();
             Categories = _context.Categories.ToList();
 
-            CurrentGood = selectedGood;
+            CurrentGood = selectedGood ?? new Good();
 
             DataContext = this;
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
+            if (CurrentGood.Id == 0)
+            {
+                _context.Goods.Add(CurrentGood);
+            }
+
             _context.SaveChanges();
             MessageBox.Show("Изменения сохранены", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             this.Close();

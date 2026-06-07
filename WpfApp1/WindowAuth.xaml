@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="WindowAuth" Height="600" Width="800">
+        Icon="/Icon.ico"
+        Title="Авторизация" Height="600" Width="800">
 
     <Grid>
         <StackPanel HorizontalAlignment="Center"
